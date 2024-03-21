@@ -1,26 +1,21 @@
 import { Module } from '@nestjs/common';
-import { CommentModule } from './comments/comments.module';
+import { CommentModule } from './modules/comments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CommentModel } from './comments/comments.model';
-
 
 const databaseConfig: TypeOrmModule = {
-  type: 'postgres',
   host: 'localhost',
   port: 5432,
   username: 'postgres',
   password: 'root',
-  entities: [CommentModel],
   database: 'testenest',
+  type: 'postgres',
+  entities: ["dist/**/*.model.js"],
   synchronize: true,
   logging: true,
-}
+};
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(databaseConfig),
-    CommentModule,
-  ],
+  imports: [TypeOrmModule.forRoot(databaseConfig), CommentModule],
   controllers: [],
   providers: [],
 })
