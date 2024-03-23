@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CommentModule } from './modules/comments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommentModule } from './modules/comments/comments.module';
 
 const databaseConfig: TypeOrmModule = {
   host: 'localhost',

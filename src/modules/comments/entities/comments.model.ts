@@ -5,7 +5,7 @@ export class CommentsModel {
     @PrimaryGeneratedColumn()
     comment_id: number
 
-    @Column()
+    @Column({nullable: true})
     parent_id: number
 
     @Column('int')
@@ -20,8 +20,12 @@ export class CommentsModel {
     @Column('date')
     created_at: Date
 
-    @Column('int')
-    vote_points: number
+
+    @Column('simple-array')
+    user_upvotes: number[]
+
+    @Column('simple-array')
+    user_downvotes: number[]
 
     @Column('boolean')
     active: boolean
