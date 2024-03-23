@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,7 +18,9 @@ import {
 } from './dto/createAndEditComment.dto';
 import { CommentsModel } from './entities/comments.model';
 import { VoteCommentDTO } from './dto/voteComment.dto';
+import { ApiKeyGuard } from 'src/app.service';
 
+@UseGuards(ApiKeyGuard)
 @Controller('/comments')
 export class CommentsController {
   constructor(

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentModule } from './modules/comments/comments.module';
+import { ConfigModule } from '@nestjs/config';
 
 const databaseConfig: TypeOrmModule = {
   host: 'localhost',
@@ -9,13 +10,13 @@ const databaseConfig: TypeOrmModule = {
   password: 'root',
   database: 'testenest',
   type: 'postgres',
-  entities: ["dist/**/*.model.js"],
+  entities: ['dist/**/*.model.js'],
   synchronize: true,
   logging: true,
 };
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), CommentModule],
+  imports: [TypeOrmModule.forRoot(databaseConfig), ConfigModule.forRoot(), CommentModule],
   controllers: [],
   providers: [],
 })
