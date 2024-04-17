@@ -1,32 +1,30 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { VotesModel } from './votes.model';
 
 @Entity()
 export class CommentsModel {
-    @PrimaryGeneratedColumn()
-    comment_id: number
+  @PrimaryGeneratedColumn()
+  comment_id: number;
 
-    @Column({nullable: true})
-    parent_id: number
+  @Column({ nullable: true })
+  parent_id: number;
 
-    @Column('int')
-    user_id: number
+  @Column('int')
+  user_id: number;
 
-    @Column('int')
-    post_id: number
+  @Column('int')
+  post_id: number;
 
-    @Column({length: 500})
-    content: string
+  @Column({ length: 500 })
+  content: string;
 
-    @Column('date')
-    created_at: Date
+  @CreateDateColumn({name: 'created_at'})
+  created_at: Date;
 
+  @Column('boolean')
+  active: boolean;
 
-    @Column('simple-array')
-    user_upvotes: number[]
-
-    @Column('simple-array')
-    user_downvotes: number[]
-
-    @Column('boolean')
-    active: boolean
+  @OneToMany(() => VotesModel, (VotesModel) => VotesModel.comment, {cascade: true})
+  @JoinTable()
+  votes: VotesModel[]
 }
