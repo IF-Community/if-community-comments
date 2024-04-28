@@ -8,12 +8,12 @@ const databaseConfig: TypeOrmModule = {
   port: 5432,
   username: 'postgres',
   password: 'root',
-  database: 'db1',
+  database: 'db2',
   type: 'postgres',
   entities: ['dist/**/*.model.js'],
   synchronize: true,
   logging: true,
-  autoLoadEntities: true
+  autoLoadEntities: true,
 };
 
 @Module({

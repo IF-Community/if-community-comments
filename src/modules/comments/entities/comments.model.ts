@@ -1,4 +1,13 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { VotesModel } from './votes.model';
 
 @Entity()
@@ -18,13 +27,9 @@ export class CommentsModel {
   @Column({ length: 500 })
   content: string;
 
-  @CreateDateColumn({name: 'created_at'})
+  @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
   @Column('boolean')
   active: boolean;
-
-  @OneToMany(() => VotesModel, (VotesModel) => VotesModel.comment, {cascade: true})
-  @JoinTable()
-  votes: VotesModel[]
 }

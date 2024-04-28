@@ -1,10 +1,4 @@
-
-
 export class CommentsService {
-    verifyUserHaveVoted() {
-
-    }
-    async processGetVotes() {
-
-    }
+  verifyUserHaveVoted() {}
+  async processGetVotes() {}
 }

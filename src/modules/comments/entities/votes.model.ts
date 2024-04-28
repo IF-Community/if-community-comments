@@ -1,5 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { CommentsModel } from './comments.model';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class VotesModel {
@@ -12,7 +15,6 @@ export class VotesModel {
   @Column('boolean')
   is_upvote: boolean;
 
-  @ManyToOne(() => CommentsModel, CommentsModel => CommentsModel.comment_id)
-  comment: CommentsModel
+  @Column('int')
+  comment_id: number;
 }
- 

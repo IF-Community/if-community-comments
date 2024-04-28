@@ -11,7 +11,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createQueryBuilder, DataSource, Repository, WithoutId } from 'typeorm';
+import { createQueryBuilder, DataSource, Repository, ReturningStatementNotSupportedError, WithoutId } from 'typeorm';
 import {
   CreateCommentDTO,
   EditCommentDTO,
@@ -25,9 +25,10 @@ import { VotesModel } from './entities/votes.model';
 @Controller('/comments')
 export class CommentsController {
   constructor(
-    @InjectRepository(CommentsModel) private commentModel: Repository<CommentsModel>,
+    @InjectRepository(CommentsModel)
+    private commentModel: Repository<CommentsModel>,
     @InjectRepository(VotesModel) private votesModel: Repository<VotesModel>,
-    private dataSource: DataSource
+    private dataSource: DataSource,
   ) {}
 
   //CRUD
@@ -36,25 +37,35 @@ export class CommentsController {
     //Apenas comentários ativos
     const commentList = await this.commentModel.findBy({active: true})
 
-    return commentList;
+    const commentWithVotes = await Promise.all(commentList.map(async (comment) => {
+      const commentVotes = await this.votesModel.findBy({comment_id: comment.comment_id})
+      return {
+        ...comment,
+        votes: commentVotes
+      }
+    })
+) 
+    return commentWithVotes;
   }
 
   @Post()
   async postComment(@Body() body: CreateCommentDTO) {
-    const newComment: Omit<CommentsModel, 'comment_id'> = {
-      ...body,
-      active: true,
-      created_at: new Date(),
-      votes: []
-    };
+    const newComment = new CommentsModel()
+    newComment.post_id = body.post_id
+    newComment.user_id = body.user_id
+    newComment.content = body.content
+    newComment.parent_id = body.parent_id
+    newComment.active = true
 
-    await this.commentModel.save(newComment);
+    await this.commentModel.save(newComment)
     return { message: 'Comentário registrado!', comment: newComment };
   }
 
   @Put(':id')
   async editComment(@Param('id') id: number, @Body() body: EditCommentDTO) {
-    const editingComment = await this.commentModel.findOneBy({ comment_id: id });
+    const editingComment = await this.commentModel.findOneBy({
+      comment_id: id,
+    });
     const editedComment: Omit<CommentsModel, 'comment_id'> = {
       ...editingComment,
       ...body,
@@ -68,7 +79,10 @@ export class CommentsController {
   @Delete(':id')
   async deleteComment(@Param('id') id: number) {
     const comment = await this.commentModel.findOneBy({ comment_id: id });
-    await this.commentModel.update({ comment_id: id }, { ...comment, active: false });
+    await this.commentModel.update(
+      { comment_id: id },
+      { ...comment, active: false },
+    );
 
     return {
       message: 'Comentário removido (softdelete)',
@@ -85,7 +99,21 @@ export class CommentsController {
 
   @Patch('add-vote/')
   async addUpVote(@Body() body: VoteCommentDTO) {
+    const votefind = await this.votesModel.findOneBy({user_id: body.user_id, comment_id: body.comment_id }
+    )
 
-    return {message: 'Comentários salvo com sucesso!'}
+    if (votefind) {
+      await this.votesModel.delete({vote_id: votefind.vote_id})
+      return { message: 'voto removido!'}
+    }
+
+    await this.votesModel.save(
+      {user_id: body.user_id, 
+        is_upvote: body.is_upvote, 
+        comment_id: body.comment_id 
+      }
+    )
+
+    return { message: 'Voto adicionado com sucesso!' };
   }
 }

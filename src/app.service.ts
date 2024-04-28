@@ -16,7 +16,10 @@ export class ApiKeyGuard implements CanActivate {
       throw new UnauthorizedException('A chave de API está faltando.');
     }
 
-    if (apiKey !== process.env.APIKEY &&!(process.env.BYPASS_APIKEY == 'true')) {
+    if (
+      apiKey !== process.env.APIKEY &&
+      !(process.env.BYPASS_APIKEY == 'true')
+    ) {
       throw new UnauthorizedException('Chave de API Inválida.');
     }
 
