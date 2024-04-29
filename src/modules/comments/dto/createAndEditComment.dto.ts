@@ -1,13 +1,9 @@
 import {
-  IsArray,
-  isInt,
   IsInt,
   IsString,
   MaxLength,
-  Min,
   ValidateIf,
 } from 'class-validator';
-import { IsNull } from 'typeorm';
 
 export class CreateCommentDTO {
   @ValidateIf((obj, value) => value == Number)
