@@ -19,6 +19,8 @@ import { CommentsModel } from './entities/comments.model';
 import { VoteCommentDTO } from './dto/voteComment.dto';
 import { ApiKeyGuard } from 'src/app.service';
 import { VotesModel } from './entities/votes.model';
+import { UsersModel } from './entities/users.model';
+import { CommentsService } from './comments.service';
 
 @UseGuards(ApiKeyGuard)
 @Controller('/comments')
@@ -27,6 +29,8 @@ export class CommentsController {
     @InjectRepository(CommentsModel)
     private commentModel: Repository<CommentsModel>,
     @InjectRepository(VotesModel) private votesModel: Repository<VotesModel>,
+    @InjectRepository(UsersModel) private UsersModel: Repository<UsersModel>,
+    private commentsService: CommentsService
   ) {}
 
   //CRUD
@@ -35,18 +39,17 @@ export class CommentsController {
     //Apenas comentários ativos
     const commentList = await this.commentModel.findBy({ active: true });
 
-    const commentWithVotes = await Promise.all(
-      commentList.map(async (comment) => {
-        const commentVotes = await this.votesModel.findBy({
-          comment_id: comment.comment_id,
-        });
-        return {
-          ...comment,
-          votes: commentVotes,
-        };
-      }),
-    );
-    return commentWithVotes;
+    return this.commentsService.getVotesAndUsers(commentList);
+  }
+
+  @Get('post/:id')
+  async getByPostId(@Param('id') id: number) {
+    const commentList = await this.commentModel.findBy({
+      post_id: id,
+      active: true,
+    });
+
+    return this.commentsService.getVotesAndUsers(commentList);
   }
 
   @Post()
@@ -58,7 +61,28 @@ export class CommentsController {
     newComment.parent_id = body.parent_id;
     newComment.active = true;
 
+    const hasUserSaved = await this.UsersModel.findOneBy({
+      user_id: body.user_id,
+    });
+
+    if (!hasUserSaved) {
+      if (body.user_name && body.user_image) {
+        //salvar usuário
+        await this.UsersModel.save({
+          user_id: body.user_id,
+          user_name: body.user_name,
+          user_image: body.user_image,
+        });
+      } else {
+        return {
+          error:
+            'Usuário com este id não está registrado. Adicione os atributos user_name e user_image para registra-lo.',
+        };
+      }
+    }
+
     await this.commentModel.save(newComment);
+
     return { message: 'Comentário registrado!', comment: newComment };
   }
 
