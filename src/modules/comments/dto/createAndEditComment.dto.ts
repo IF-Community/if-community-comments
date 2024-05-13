@@ -10,6 +10,10 @@ export class CreateCommentDTO {
   parent_id: number;
   @IsInt()
   user_id: number;
+  @ValidateIf((obj, value) => value == String)
+  user_name: string;
+  @ValidateIf((obj, value) => value == String)
+  user_image: string;
   @IsInt()
   post_id: number;
   @IsString()
