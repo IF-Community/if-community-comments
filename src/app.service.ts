@@ -12,11 +12,14 @@ export class ApiKeyGuard implements CanActivate {
 
     const apiKey = request.headers['api-key'];
 
-    if (!apiKey) {
+    if (!apiKey && !(process.env.BYPASS_APIKEY == 'true')) {
       throw new UnauthorizedException('A chave de API está faltando.');
     }
 
-    if (apiKey !== process.env.APIKEY) {
+    if (
+      apiKey !== process.env.APIKEY &&
+      !(process.env.BYPASS_APIKEY == 'true')
+    ) {
       throw new UnauthorizedException('Chave de API Inválida.');
     }
 

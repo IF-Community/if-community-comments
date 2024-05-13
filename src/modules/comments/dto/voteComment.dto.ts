@@ -1,7 +1,15 @@
-import { IsArray, isInt, IsInt, IsString, MaxLength, Min, ValidateIf } from 'class-validator';
-import { IsNull } from 'typeorm';
+import {
+  IsBoolean,
+  IsInt,
+} from 'class-validator';
 
 export class VoteCommentDTO {
   @IsInt()
-  reaction_by_user: number
+  comment_id: number;
+
+  @IsInt()
+  user_id: number;
+
+  @IsBoolean()
+  is_upvote: boolean;
 }

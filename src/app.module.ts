@@ -8,15 +8,20 @@ const databaseConfig: TypeOrmModule = {
   port: 5432,
   username: 'postgres',
   password: 'root',
-  database: 'testenest',
+  database: 'db2',
   type: 'postgres',
   entities: ['dist/**/*.model.js'],
   synchronize: true,
   logging: true,
+  autoLoadEntities: true,
 };
 
 @Module({
-  imports: [TypeOrmModule.forRoot(databaseConfig), ConfigModule.forRoot(), CommentModule],
+  imports: [
+    TypeOrmModule.forRoot(databaseConfig),
+    ConfigModule.forRoot(),
+    CommentModule,
+  ],
   controllers: [],
   providers: [],
 })
