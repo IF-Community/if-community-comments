@@ -44,12 +44,10 @@ export class CommentsController {
 
   @Get('post/:id')
   async getByPostId(@Param('id') id: number) {
-    console.log("aqui", id)
     const commentList = await this.commentModel.findBy({
       post_id: id,
       active: true,
     });
-    console.log(commentList)
 
     return this.commentsService.getVotesAndUsers(commentList);
   }

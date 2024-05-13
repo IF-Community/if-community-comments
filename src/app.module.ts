@@ -11,8 +11,9 @@ const databaseConfig: TypeOrmModule = {
   password: 'root',
   database: 'db3',
   type: 'postgres',
-  entities: ['dist/**/*.model.js', 'src/**/*.model.js'],
-  synchronize: true,
+  entities: ['dist/**/*.model.js'],
+  migrations: ['dist/migration/*{.ts,.js}'],
+  migrationsRun: true,
   logging: true,
   autoLoadEntities: true,
 };
