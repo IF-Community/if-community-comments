@@ -87,4 +87,4 @@ Crie um arquivo .env na raiz do projeto com as seguintes chaves:
   npm run start
   ```
 
-O servidor estará em execução em http://localhost:3005.
+O servidor estará em execução em http://localhost:3001.
